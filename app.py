@@ -104,7 +104,6 @@ def createNewAccount():
 
 
 def decryptAll():
-    folderBtn.config(text="Processing",bg="green")
     files = os.listdir("data")
     if(not os.path.isdir("decrypted")):
         os.mkdir("decrypted")
@@ -120,11 +119,13 @@ def decryptAll():
             logFile.close()
             error=True
     if(not error):
-        folderBtn.config(text="All Done!")
+        folderBtn.config(text="All Done!",bg="green")
+        messagebox.showinfo("All Done","Opening the App directory kindly open folder name \"decrypted\"")
+        os.startfile(os.getcwd())
     else:
-        messagebox.showerror("showerror", "Error occured may be few files got decrpyted kindly mail us the log file created inside the folder as it is.\n Note: Logout Now")
+        messagebox.showerror("Attention!!", "Error occured may be few files got decrpyted kindly mail us the log file created inside the folder as it is.\n Note: Logout Now")
         folderBtn.config(text="Error occured!",bg="red")
-    
+        
 def encryptFileOrFiles():
     files = fd.askopenfilenames(title="Select file or files")
     #check does data folder available
@@ -132,20 +133,21 @@ def encryptFileOrFiles():
         #make a data folder
         os.mkdir("data")
     #else continue the work
+    error=False
     for file in files:
         try:
             encData = encContent(file)
             fileName = file.split("/")
             fileNameWithExt = fileName[len(fileName)-1]
-            print(fileNameWithExt)
             newFileName = change_file_name(fileNameWithExt)
             saveFileEnc(os.path.join("data",newFileName),encData)
         except Exception as e:
             logFile = open("log.txt",'a')
-            logFile.write(time.ctime()+f"Error while ecrypting file :=> {file} in func:=> encryptFileOrFiles() for user:=> {user}  \n")
+            logFile.write(time.ctime()+f" : Error while ecrypting file :=> {file} in func:=> encryptFileOrFiles() for user:=> {user}  \n")
             logFile.close()
             error=True
-
+    if(not error and len(files)>0):
+        messagebox.showinfo("Done", f"Successfully encrypted all the files")
 
 def makeKey(userkey):
     key=bytes(userkey,'utf-8')
